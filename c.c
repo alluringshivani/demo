@@ -1,9 +1,3 @@
-/*
- * Homework-1 - bbcp.c - bare-bones copy a file
- * Author: Rajat Rajesh Shetty
- * Email: rshett2@stevens.edu
- */
-
 #include <errno.h>
 #include <fcntl.h>
 #include <libgen.h>
@@ -27,22 +21,19 @@
 int main(int argc, char *argv[]) {
   char buffer[BUFFERSIZE];
   int src, dst, in, out;
-  int inputFD, outputFD;
-  char *link_path;
-  char target_path[BUF_LIMIT];
   char filebuf[BUF_SIZE];
   char bufr[BUF_SIZE];
-  struct stat buf, secondDirectory;
-  ssize_t number, len;
+  struct stat buf;
+  ssize_t number;
 
   src = open(argv[1], O_RDONLY);
 
-  if (argc != 3) {
+  if (!src | argc != 3) {
     fprintf(stderr, "Please specify source-file target-file\n");
     exit(1);
   }
 
-  if (strcmp(argv[1], argv[2]) == 0) {
+  if (strcmp(argv[1], argv[2]) == 0) {  /* checking if the source file and destination file are the same while copy command is being used*/
     fprintf(stderr, "both files entered are the same\n");
     exit(1);
   }
@@ -53,7 +44,7 @@ int main(int argc, char *argv[]) {
 
   stat(argv[1], &buf);
 
-  if (S_ISDIR(buf.st_mode)) {
+  if (S_ISDIR(buf.st_mode)) {  /* IS_DIR is a function that checks if the file is a directory or not*/
     printf("Source is a directory\n");
     exit(1);
   }
@@ -72,7 +63,7 @@ int main(int argc, char *argv[]) {
 
   stat(argv[2], &buf);
 
-  mkdir(dirname(strdup(argv[2])), 0777);
+  mkdir(dirname(strdup(argv[2])), 0777); /* Reference: https://stackoverflow.com/questions/5425891/how-do-i-check-if-a-directory-exists-is-dir-file-exists-or-both */
   if (S_ISDIR(buf.st_mode)) {
     strcat(argv[2], "/");
     strcat(argv[2], basename(strdup(argv[1])));
